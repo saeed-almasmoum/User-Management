@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -32,6 +33,8 @@ class AuthController extends Controller
         $user->email = request()->email;
         $user->password = bcrypt(request()->password);
         $user->save();
+
+        event(new Registered($user));
 
         return $this->apiResponse($user, MessageConstants::STORE_SUCCESS, 201);
     }
@@ -99,4 +102,5 @@ class AuthController extends Controller
         $user->update(request()->all());
         return $this->apiResponse($user, MessageConstants::UPDATE_SUCCESS, 200);
     }
+
 }
